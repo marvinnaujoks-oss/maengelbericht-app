@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wartungsbericht &amp; Mängelliste</title>
+  <title>Mängelbericht – Erfassung</title>
   <style>
     :root {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -28,496 +28,667 @@
       max-width: 1100px;
       width: 100%;
       background: #ffffff;
-      padding: 1.5rem;
-      border-radius: 0.75rem;
-      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      border-radius: 1rem;
+      padding: 1.25rem 1.25rem 1.75rem;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
     }
 
-    h1 {
-      text-align: center;
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0.75rem;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    header h1 span.icon {
       font-size: 1.6rem;
-      margin: 0 0 0.3rem;
     }
 
-    .subtitle {
-      text-align: center;
+    header .sub {
+      font-size: 0.85rem;
       color: #6b7280;
-      font-size: 0.9rem;
-      margin-bottom: 1.2rem;
     }
 
-    h2 {
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 1rem 0 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .section-title span {
       font-size: 1.1rem;
-      margin: 1.2rem 0 0.5rem;
     }
 
-    .header-grid {
+    .meta-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 0.75rem 1rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      font-size: 0.8rem;
     }
 
     .field label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #4b5563;
-      margin-bottom: 0.15rem;
+      font-weight: 500;
+      color: #374151;
     }
 
-    .field input,
-    .field select {
-      width: 100%;
-      padding: 0.4rem 0.5rem;
-      border-radius: 0.4rem;
+    .field small {
+      color: #9ca3af;
+      font-size: 0.7rem;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      font: inherit;
+      padding: 0.35rem 0.45rem;
+      border-radius: 0.5rem;
       border: 1px solid #d1d5db;
-      font-size: 0.9rem;
+      background: #f9fafb;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+      width: 100%;
     }
 
-    .field input:focus,
-    .field select:focus,
+    textarea {
+      resize: vertical;
+      min-height: 2.1rem;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    select:focus,
     textarea:focus {
-      outline: 2px solid #2563eb;
-      outline-offset: 1px;
-      border-color: transparent;
+      outline: none;
+      border-color: #2563eb;
+      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.35);
     }
 
     .toolbar {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
-      margin: 1rem 0 0.5rem;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.35rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .toolbar-left,
+    .toolbar-right {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
     }
 
     button {
-      border: none;
+      font: inherit;
       border-radius: 999px;
-      padding: 0.4rem 0.9rem;
-      font-size: 0.9rem;
-      font-weight: 500;
+      border: 1px solid transparent;
+      padding: 0.25rem 0.7rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
+      font-size: 0.8rem;
+      background: #111827;
+      color: white;
+      box-shadow: 0 10px 18px rgba(15, 23, 42, 0.25);
+      transition: background 0.15s, transform 0.05s, box-shadow 0.15s;
     }
 
-    .btn-primary {
-      background: #2563eb;
-      color: #ffffff;
+    button span {
+      font-size: 0.9rem;
     }
 
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #374151;
+    button.secondary {
+      background: #f3f4f6;
+      color: #111827;
+      border-color: #e5e7eb;
+      box-shadow: none;
     }
 
-    .btn-danger {
-      background: #ef4444;
-      color: #ffffff;
+    button.danger {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-color: #fecaca;
+      box-shadow: none;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .hint {
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+
+    .table-wrapper {
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+      background: #f9fafb;
+    }
+
+    .table-scroll {
+      max-height: 55vh;
+      overflow: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.8rem;
-      margin-top: 0.5rem;
+      min-width: 900px;
     }
 
     thead {
-      background: #f3f4f6;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #111827;
+      color: white;
     }
 
     th,
     td {
-      border: 1px solid #e5e7eb;
-      padding: 0.4rem;
+      padding: 0.35rem 0.4rem;
+      border-bottom: 1px solid #e5e7eb;
       vertical-align: top;
     }
 
     th {
       text-align: left;
       font-weight: 600;
+      font-size: 0.75rem;
       white-space: nowrap;
     }
 
+    th small {
+      display: block;
+      font-weight: 400;
+      color: #d1d5db;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f3f4f6;
+    }
+
+    tbody tr:hover {
+      background: #e5e7eb;
+    }
+
     td input[type="text"],
-    td textarea,
-    td select {
-      width: 100%;
-      border: none;
-      font-size: 0.8rem;
-      padding: 0.2rem 0.25rem;
-      border-radius: 0.3rem;
-      background: #ffffff;
+    td select,
+    td textarea {
+      background: transparent;
+      border-radius: 0.4rem;
+      padding: 0.25rem 0.35rem;
     }
 
     td textarea {
-      resize: vertical;
-      min-height: 2.2rem;
+      min-height: 2rem;
     }
 
-    td input[type="checkbox"] {
+    .center {
+      text-align: center;
+    }
+
+    .checkbox-cell {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .checkbox-cell input[type="checkbox"] {
       width: 1.1rem;
       height: 1.1rem;
     }
 
-    .table-wrapper {
-      overflow-x: auto;
-      margin-top: 0.3rem;
-    }
-
-    .meta-row {
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin-top: 0.5rem;
+    .footer-hint {
+      margin-top: 0.75rem;
+      font-size: 0.7rem;
+      color: #9ca3af;
       display: flex;
       justify-content: space-between;
-      gap: 0.5rem;
+      gap: 0.75rem;
       flex-wrap: wrap;
     }
 
-    .badge {
+    .pill {
       display: inline-flex;
       align-items: center;
       gap: 0.25rem;
-      padding: 0.15rem 0.5rem;
+      padding: 0.15rem 0.55rem;
       border-radius: 999px;
-      background: #eff6ff;
-      color: #1d4ed8;
+      background: #eef2ff;
+      color: #4f46e5;
       font-size: 0.7rem;
     }
 
-    @media (max-width: 640px) {
-      h1 {
-        font-size: 1.3rem;
+    @media (max-width: 900px) {
+      body {
+        padding: 0.5rem;
       }
-
       .app {
-        padding: 1rem;
+        padding: 0.9rem 0.75rem 1.1rem;
+        border-radius: 0.75rem;
       }
-
-      th,
-      td {
-        white-space: nowrap;
+      header {
+        align-items: flex-start;
+      }
+      header h1 {
+        font-size: 1.1rem;
+      }
+      .meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .table-wrapper {
+        border-radius: 0.5rem;
       }
     }
   </style>
 </head>
 <body>
   <div class="app" id="app">
-    <h1>Wartungsbericht &amp; Mängelliste</h1>
-    <p class="subtitle">
-      Erfassung von Wartungsdaten und einzelnen Mängeln inkl. Fotodokumentation.
-    </p>
+    <header>
+      <div>
+        <h1>
+          <span class="icon">🧾</span>
+          Mängelbericht – Erfassung
+        </h1>
+        <div class="sub">
+          Erfassung von Mängeln aus Wartungsberichten mit Foto-Referenzen
+        </div>
+      </div>
+      <div class="badge">
+        <span>💾</span>
+        Speichert automatisch im Browser
+      </div>
+    </header>
 
-    <!-- Kopfbereich / Stammdaten -->
-    <h2>Stammdaten</h2>
-    <div class="header-grid">
+    <!-- Kopfbereich -->
+    <div class="section-title">
+      <span>📋</span>
+      Kopfdaten
+    </div>
+    <div class="meta-grid">
       <div class="field">
         <label for="kunde">Kunde</label>
-        <input id="kunde" data-header-field type="text" placeholder="Firmenname" />
+        <input id="kunde" type="text" placeholder="z. B. Mercedes Benz AG Werk 007" />
       </div>
       <div class="field">
         <label for="objekt">Objekt</label>
-        <input id="objekt" data-header-field type="text" placeholder="Objekt / Standort" />
+        <input
+          id="objekt"
+          type="text"
+          placeholder="z. B. Funktionshalle, Hermann-Köster-Str. 1, Bremen"
+        />
       </div>
       <div class="field">
         <label for="gewerk">Gewerk</label>
-        <select id="gewerk" data-header-field>
-          <option value="">Bitte wählen…</option>
-          <option>Löschwassertechnik</option>
-          <option>Tragbare Feuerlöscher</option>
-          <option>Brandmeldeanlage</option>
-          <option>RWA / Entrauchung</option>
-          <option>Flucht- &amp; Rettungspläne</option>
-          <option>Sonstiges</option>
+        <select id="gewerk">
+          <option value="">– Bitte wählen –</option>
+          <option value="Loeschwassertechnik">Löschwassertechnik</option>
+          <option value="Tragbare Feuerloescher">Tragbare Feuerlöscher</option>
+          <option value="Fahrbare Feuerloescher">Fahrbare Feuerlöscher</option>
+          <option value="RWA">RWA / Entrauchung</option>
+          <option value="BrandschutzTüren">
+            Brandschutz- und Rauchschutztüren
+          </option>
+          <option value="Sonstiges">Sonstiges</option>
         </select>
       </div>
       <div class="field">
-        <label for="datum">Datum der Wartung</label>
-        <input id="datum" data-header-field type="date" />
-      </div>
-      <div class="field">
         <label for="berichtnr">Wartungsbericht-Nr.</label>
-        <input id="berichtnr" data-header-field type="text" />
+        <input id="berichtnr" type="text" placeholder="z. B. 993004257" />
+      </div>
+
+      <div class="field">
+        <label for="datum-wartung">Datum der Wartung</label>
+        <input id="datum-wartung" type="date" />
       </div>
       <div class="field">
-        <label for="letzte-wartung">Letzte Wartung am</label>
-        <input id="letzte-wartung" data-header-field type="date" />
+        <label for="datum-begehung">Datum der Begehung</label>
+        <input id="datum-begehung" type="date" />
       </div>
     </div>
 
-    <!-- Mängelliste -->
-    <h2>Mängelliste</h2>
+    <!-- Mängelbereich -->
+    <div class="section-title">
+      <span>❗</span>
+      Mängelliste
+    </div>
 
     <div class="toolbar">
-      <button type="button" class="btn-primary" id="add-row-btn">
-        ➕ Neuer Mangel
-      </button>
-      <button type="button" class="btn-secondary" id="expand-btn">
-        ⤢ Zeilen höher
-      </button>
-      <button type="button" class="btn-danger" id="clear-btn">
-        🗑️ Alles löschen
-      </button>
+      <div class="toolbar-left">
+        <button id="add-row-btn" type="button">
+          <span>➕</span> Neuen Mangel hinzufügen
+        </button>
+        <button id="clear-table-btn" type="button" class="danger">
+          <span>🗑️</span> Tabelle leeren
+        </button>
+      </div>
+      <div class="toolbar-right">
+        <span class="hint">
+          Tipp: Mangel-Nr. aus dem Wartungsbericht übernehmen, Maßnahmen &amp; Fotos hier erfassen.
+        </span>
+      </div>
     </div>
 
     <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Nr.</th>
-            <th>Bereich / Etage</th>
-            <th>Mangelbeschreibung</th>
-            <th>Empfohlene Maßnahme</th>
-            <th>Dringlichkeit</th>
-            <th>Foto gemacht?</th>
-            <th>Foto-Dateiname</th>
-            <th>Erledigt?</th>
-            <th>Bemerkung</th>
-          </tr>
-        </thead>
-        <tbody id="maengel-body">
-          <!-- Zeilen werden per JS eingefügt -->
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table id="maengel-table">
+          <thead>
+            <tr>
+              <th style="width: 8rem;">
+                Mangel-Nr.
+                <small>aus Wartungsbericht</small>
+              </th>
+              <th style="width: 10rem;">
+                Nummer / Bereich / Etage
+                <small>z. B. 1.1, EG Flur Nord</small>
+              </th>
+              <th style="width: 14rem;">
+                Maßnahme
+                <small>z. B. Obentürschließer tauschen</small>
+              </th>
+              <th style="width: 7rem;">
+                Dringlichkeit
+                <small>für Priorisierung</small>
+              </th>
+              <th style="width: 5rem;" class="center">
+                Foto gemacht?
+              </th>
+              <th style="width: 10rem;">
+                Foto-Dateiname
+                <small>z. B. IMG_1234.jpg</small>
+              </th>
+              <th>
+                Bemerkung
+                <small>Zusatzinfos</small>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Zeilen werden per JS eingefügt -->
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <div class="meta-row">
-      <span class="badge" id="row-count-badge">0 Mängel erfasst</span>
-      <span>Alle Eingaben werden lokal auf diesem Gerät gespeichert (kein Server).</span>
+    <div class="footer-hint">
+      <div>
+        <span class="pill">ℹ️</span>
+        Deine Einträge werden automatisch im Browser gespeichert. Löschen-Button
+        leert Tabelle und Speicher.
+      </div>
+      <div>
+        <span class="pill">📄</span>
+        Für den Kundenbericht kannst du die Seite später als PDF drucken.
+      </div>
     </div>
   </div>
 
   <script>
     (function () {
-      const STORAGE_KEY = "wartungsbericht_maengel_v1";
-      const bodyEl = document.getElementById("maengel-body");
-      const addRowBtn = document.getElementById("add-row-btn");
-      const clearBtn = document.getElementById("clear-btn");
-      const expandBtn = document.getElementById("expand-btn");
-      const rowCountBadge = document.getElementById("row-count-badge");
+      const STORAGE_KEY = "maengelbericht-app-v1";
+
       const appEl = document.getElementById("app");
+      const tbody = document.querySelector("#maengel-table tbody");
+      const addRowBtn = document.getElementById("add-row-btn");
+      const clearTableBtn = document.getElementById("clear-table-btn");
 
-      let mangelCounter = 0;
-      let rowsTall = false;
+      const metaFields = [
+        "kunde",
+        "objekt",
+        "gewerk",
+        "berichtnr",
+        "datum-wartung",
+        "datum-begehung",
+      ];
 
-      function createSelectDringlichkeit(value = "") {
-        const select = document.createElement("select");
-        select.dataset.field = "dringlichkeit";
-
-        const opts = [
-          { v: "", l: "Bitte wählen…" },
-          { v: "Niedrig", l: "Niedrig" },
-          { v: "Mittel", l: "Mittel" },
-          { v: "Hoch", l: "Hoch" },
-        ];
-
-        opts.forEach((o) => {
-          const opt = document.createElement("option");
-          opt.value = o.v;
-          opt.textContent = o.l;
-          if (o.v === value) opt.selected = true;
-          select.appendChild(opt);
+      function getMeta() {
+        const meta = {};
+        metaFields.forEach((id) => {
+          const el = document.getElementById(id);
+          meta[id] = el ? el.value : "";
         });
-
-        return select;
+        return meta;
       }
 
-      function addRow(data = {}) {
-        mangelCounter += 1;
+      function setMeta(meta) {
+        if (!meta) return;
+        metaFields.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el && Object.prototype.hasOwnProperty.call(meta, id)) {
+            el.value = meta[id];
+          }
+        });
+      }
+
+      function createRow(data = {}) {
         const tr = document.createElement("tr");
 
         tr.innerHTML = `
-          <td>${mangelCounter}</td>
-          <td><input type="text" data-field="bereich" placeholder="z.B. DG, Treppenhaus" /></td>
-          <td><textarea data-field="beschreibung" placeholder="Mangel kurz und präzise beschreiben"></textarea></td>
-          <td><textarea data-field="massnahme" placeholder="Empfohlene Maßnahme / Reparatur"></textarea></td>
-          <td></td>
-          <td style="text-align:center;"><input type="checkbox" data-field="fotoGemacht" /></td>
-          <td><input type="text" data-field="fotoName" placeholder="z.B. IMG_1234.jpg" /></td>
-          <td style="text-align:center;"><input type="checkbox" data-field="erledigt" /></td>
-          <td><textarea data-field="bemerkung" placeholder="Zusätzliche Hinweise"></textarea></td>
+          <td>
+            <input type="text" data-field="mangelNr" placeholder="z. B. 32611" />
+          </td>
+          <td>
+            <input type="text" data-field="standort" placeholder="z. B. 1.1 / EG Flur" />
+          </td>
+          <td>
+            <textarea data-field="massnahme" placeholder="z. B. Obentürschließer erneuern"></textarea>
+          </td>
+          <td>
+            <select data-field="dringlichkeit">
+              <option value="">–</option>
+              <option value="normal">Normal</option>
+              <option value="hoch">Hoch</option>
+              <option value="sehr_hoch">Sehr hoch</option>
+              <option value="akut">Akut</option>
+            </select>
+          </td>
+          <td class="checkbox-cell">
+            <input type="checkbox" data-field="fotoGemacht" />
+          </td>
+          <td>
+            <input type="text" data-field="fotoDateiname" placeholder="IMG_1234.jpg" />
+          </td>
+          <td>
+            <textarea data-field="bemerkung" placeholder="z. B. Tür klemmt stark, Nutzer informieren"></textarea>
+          </td>
         `;
 
-        // Dringlichkeit-Select einsetzen
-        const dringCell = tr.children[4];
-        const dringSelect = createSelectDringlichkeit(data.dringlichkeit || "");
-        dringCell.appendChild(dringSelect);
-
-        bodyEl.appendChild(tr);
-
         // Vorbelegen, falls Daten vorhanden
-        if (Object.keys(data).length > 0) {
-          const set = (field, val) => {
-            const el = tr.querySelector(`[data-field="${field}"]`);
-            if (!el) return;
-            if (el.type === "checkbox") {
-              el.checked = Boolean(val);
-            } else {
-              el.value = val ?? "";
-            }
-          };
+        if (data) {
+          const inputs = tr.querySelectorAll("[data-field]");
+          inputs.forEach((el) => {
+            const field = el.getAttribute("data-field");
+            if (!field) return;
+            const value = data[field];
 
-          set("bereich", data.bereich);
-          set("beschreibung", data.beschreibung);
-          set("massnahme", data.massnahme);
-          set("fotoGemacht", data.fotoGemacht);
-          set("fotoName", data.fotoName);
-          set("erledigt", data.erledigt);
-          set("bemerkung", data.bemerkung);
+            if (el.type === "checkbox") {
+              el.checked = Boolean(value);
+            } else if (
+              typeof value === "string" ||
+              typeof value === "number"
+            ) {
+              el.value = value;
+            }
+          });
         }
 
-        updateRowCount();
         attachRowListeners(tr);
-      }
-
-      function updateRowCount() {
-        const rows = bodyEl.querySelectorAll("tr").length;
-        rowCountBadge.textContent =
-          rows === 1 ? "1 Mangel erfasst" : rows + " Mängel erfasst";
+        return tr;
       }
 
       function attachRowListeners(tr) {
-        tr.addEventListener("input", saveAll);
-        tr.addEventListener("change", saveAll);
-      }
-
-      function getHeaderData() {
-        const headerEls = document.querySelectorAll("[data-header-field]");
-        const data = {};
-        headerEls.forEach((el) => {
+        const inputs = tr.querySelectorAll(
+          "input[data-field], select[data-field], textarea[data-field]"
+        );
+        inputs.forEach((el) => {
+          const evt = el.tagName === "SELECT" ? "change" : "input";
+          el.addEventListener(evt, saveAll);
           if (el.type === "checkbox") {
-            data[el.id] = el.checked;
-          } else {
-            data[el.id] = el.value;
+            el.addEventListener("change", saveAll);
           }
         });
-        return data;
       }
 
-      function getMaengelData() {
-        const rows = Array.from(bodyEl.querySelectorAll("tr"));
-        return rows.map((tr, index) => {
-          const obj = { nummer: index + 1 };
-          tr.querySelectorAll("[data-field]").forEach((el) => {
-            let val;
+      function getRows() {
+        const rows = [];
+        const trs = tbody.querySelectorAll("tr");
+        trs.forEach((tr) => {
+          const rowData = {
+            mangelNr: "",
+            standort: "",
+            massnahme: "",
+            dringlichkeit: "",
+            fotoGemacht: false,
+            fotoDateiname: "",
+            bemerkung: "",
+          };
+          const inputs = tr.querySelectorAll("[data-field]");
+          inputs.forEach((el) => {
+            const field = el.getAttribute("data-field");
+            if (!field) return;
             if (el.type === "checkbox") {
-              val = el.checked;
+              rowData[field] = el.checked;
             } else {
-              val = el.value;
+              rowData[field] = el.value;
             }
-            obj[el.dataset.field] = val;
           });
-          return obj;
+          // Nur speichern, wenn nicht komplett leer
+          const values = Object.values(rowData).join("").trim();
+          if (values !== "") {
+            rows.push(rowData);
+          }
         });
+        return rows;
       }
 
       function saveAll() {
-        const payload = {
-          header: getHeaderData(),
-          maengel: getMaengelData(),
-          counter: mangelCounter,
-        };
+        const meta = getMeta();
+        const rows = getRows();
+        const payload = { meta, rows };
+
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-        } catch (e) {
-          console.warn("Konnte nicht speichern:", e);
+        } catch (err) {
+          console.error("Speichern fehlgeschlagen:", err);
         }
       }
 
       function loadAll() {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-          // Mindestens eine leere Zeile anbieten
-          addRow();
-          return;
-        }
+        let payload = null;
         try {
-          const data = JSON.parse(raw);
-
-          // Kopf
-          if (data.header) {
-            Object.entries(data.header).forEach(([id, val]) => {
-              const el = document.getElementById(id);
-              if (!el) return;
-              if (el.type === "checkbox") {
-                el.checked = Boolean(val);
-              } else {
-                el.value = val;
-              }
-            });
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            payload = JSON.parse(raw);
           }
+        } catch (err) {
+          console.error("Laden fehlgeschlagen:", err);
+        }
 
-          // Mängel
-          bodyEl.innerHTML = "";
-          mangelCounter = 0;
-          if (Array.isArray(data.maengel) && data.maengel.length > 0) {
-            data.maengel.forEach((m) => addRow(m));
-          } else {
-            addRow();
+        if (payload && payload.meta) {
+          setMeta(payload.meta);
+        }
+
+        tbody.innerHTML = "";
+
+        if (payload && Array.isArray(payload.rows) && payload.rows.length) {
+          payload.rows.forEach((row) => {
+            const tr = createRow(row);
+            tbody.appendChild(tr);
+          });
+        } else {
+          // Wenn noch keine Daten da sind: 3 leere Zeilen
+          for (let i = 0; i < 3; i++) {
+            const tr = createRow();
+            tbody.appendChild(tr);
           }
-        } catch (e) {
-          console.warn("Konnte gespeicherte Daten nicht laden:", e);
-          bodyEl.innerHTML = "";
-          mangelCounter = 0;
-          addRow();
+        }
+      }
+
+      function clearTable() {
+        const ok = window.confirm(
+          "Alle Mängel aus Tabelle und Zwischenspeicher löschen?"
+        );
+        if (!ok) return;
+        tbody.innerHTML = "";
+        for (let i = 0; i < 3; i++) {
+          const tr = createRow();
+          tbody.appendChild(tr);
         }
         saveAll();
       }
 
-      function clearAll() {
-        if (
-          !confirm(
-            "Alle Eingaben (Stammdaten und Mängel) wirklich löschen? Dies kann nicht rückgängig gemacht werden."
-          )
-        ) {
-          return;
-        }
-        localStorage.removeItem(STORAGE_KEY);
-        bodyEl.innerHTML = "";
-        mangelCounter = 0;
-
-        // Kopf-Felder leeren
-        document.querySelectorAll("[data-header-field]").forEach((el) => {
-          if (el.type === "checkbox") {
-            el.checked = false;
-          } else {
-            el.value = "";
-          }
-        });
-
-        addRow();
-        saveAll();
-      }
-
-      function toggleRowHeight() {
-        rowsTall = !rowsTall;
-        appEl.classList.toggle("rows-tall", rowsTall);
-        const textareas = appEl.querySelectorAll("td textarea");
-        textareas.forEach((ta) => {
-          ta.style.minHeight = rowsTall ? "3.4rem" : "2.2rem";
-        });
-      }
-
-      // Globale Listener
-      addRowBtn.addEventListener("click", () => {
-        addRow();
-        saveAll();
+      // Event Listener Kopf
+      metaFields.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const evt = el.tagName === "SELECT" ? "change" : "input";
+        el.addEventListener(evt, saveAll);
       });
 
-      clearBtn.addEventListener("click", clearAll);
-      expandBtn.addEventListener("click", toggleRowHeight);
+      // Buttons
+      addRowBtn.addEventListener("click", () => {
+        const tr = createRow();
+        tbody.appendChild(tr);
+        saveAll();
+        // etwas nach unten scrollen, damit neue Zeile sichtbar ist
+        tr.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
 
-      document
-        .querySelectorAll("[data-header-field]")
-        .forEach((el) => {
-          el.addEventListener("input", saveAll);
-          el.addEventListener("change", saveAll);
-        });
+      clearTableBtn.addEventListener("click", clearTable);
 
-      // Initial laden
+      // Initial
       loadAll();
     })();
   </script>
