@@ -56,16 +56,14 @@
         color: #374151;
       }
       .field input,
-      .field select,
-      .field textarea {
+      .field select {
         padding: 0.4rem 0.55rem;
         border-radius: 0.5rem;
         border: 1px solid #d1d5db;
         font: inherit;
       }
       .field input:focus,
-      .field select:focus,
-      .field textarea:focus {
+      .field select:focus {
         outline: none;
         border-color: #2563eb;
         box-shadow: 0 0 0 1px #2563eb33;
@@ -226,15 +224,15 @@
           <table>
             <thead>
               <tr>
-                <th>Mangel-Nr.</th>
-                <th>Nummer</th>
-                <th>Tür-ID</th>
-                <th>Etage</th>
-                <th>Bereich</th>
-                <th>Erforderliche Maßnahme</th>
-                <th>Dringlichkeit</th>
-                <th>Foto gemacht</th>
-                <th>Foto-Dateiname</th>
+                <th style="width: 70px;">Mangel-Nr.</th>
+                <th style="width: 140px;">Mangelbeschreibung</th>
+                <th style="width: 110px;">ID-Nummer</th>
+                <th style="width: 80px;">Etage</th>
+                <th style="width: 120px;">Bereich</th>
+                <th style="width: 220px;">Erforderliche Maßnahme</th>
+                <th style="width: 105px;">Dringlichkeit</th>
+                <th style="width: 90px;">Foto gemacht</th>
+                <th style="width: 130px;">Foto-Dateiname</th>
                 <th>Bemerkung</th>
               </tr>
             </thead>
@@ -259,8 +257,8 @@
 
         const ROW_FIELDS = [
           "mangelNr",
-          "nummer",
-          "tuerId",
+          "mangelBeschreibung",
+          "idNummer",
           "etage",
           "bereich",
           "massnahme",
@@ -282,18 +280,20 @@
         function createRow(data = {}) {
           const tr = document.createElement("tr");
 
-          function createInput(field) {
+          function createInput(field, placeholder = "") {
             const input = document.createElement("input");
             input.type = "text";
             input.dataset.field = field;
             input.value = data[field] ?? "";
+            if (placeholder) input.placeholder = placeholder;
             return input;
           }
 
-          function createTextarea(field) {
+          function createTextarea(field, placeholder = "") {
             const ta = document.createElement("textarea");
             ta.dataset.field = field;
             ta.value = data[field] ?? "";
+            if (placeholder) ta.placeholder = placeholder;
             return ta;
           }
 
@@ -319,20 +319,24 @@
           }
 
           const cells = [
-            createInput("mangelNr"),
-            createInput("nummer"),
-            createInput("tuerId"),
-            createInput("etage"),
-            createInput("bereich"),
-            createTextarea("massnahme"),
+            createInput("mangelNr", "z. B. 32611"),
+            createInput("mangelBeschreibung", "z. B. Dichtung defekt"),
+            createInput("idNummer", "z. B. Tür-ID"),
+            createInput("etage", "z. B. EG"),
+            createInput("bereich", "z. B. Flur Nord"),
+            createTextarea("massnahme", "Benötigte Maßnahme / Material …"),
             createSelectDringlichkeit(),
             createCheckbox("fotoGemacht"),
-            createInput("fotoDatei"),
-            createTextarea("bemerkung"),
+            createInput("fotoDatei", "IMG_1234.jpg"),
+            createTextarea("bemerkung", "Optionale Zusatzinfos …"),
           ];
 
-          cells.forEach((control) => {
+          cells.forEach((control, index) => {
             const td = document.createElement("td");
+            if (index === 7) {
+              // Foto-Checkbox mittig
+              td.style.textAlign = "center";
+            }
             td.appendChild(control);
             tr.appendChild(td);
           });
@@ -349,11 +353,7 @@
           META_FIELDS.forEach((key) => {
             const el = document.querySelector("[data-meta='" + key + "']");
             if (!el) return;
-            if (el.type === "date") {
-              meta[key] = el.value;
-            } else {
-              meta[key] = el.value;
-            }
+            meta[key] = el.value;
           });
 
           const rows = [];
@@ -368,7 +368,6 @@
                 rowData[field] = el.value;
               }
             });
-            // leere Zeilen komplett ignorieren
             const hasContent = Object.values(rowData).some((v) => {
               if (typeof v === "boolean") return v;
               return (v || "").toString().trim() !== "";
