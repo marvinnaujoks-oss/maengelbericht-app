@@ -1,630 +1,464 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mängelbericht – Erfassung</title>
-  <style>
-    :root {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.5;
-      color: #111827;
-      background-color: #f3f4f6;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 1rem;
-      display: flex;
-      justify-content: center;
-    }
-
-    .app {
-      max-width: 1100px;
-      width: 100%;
-      background: #ffffff;
-      border-radius: 0.75rem;
-      padding: 1.25rem;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
-    }
-
-    h1 {
-      margin: 0 0 0.25rem;
-      font-size: 1.6rem;
-      text-align: center;
-    }
-
-    .subtitle {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #6b7280;
-      margin-bottom: 1rem;
-    }
-
-    .meta-section {
-      border: 1px solid #e5e7eb;
-      border-radius: 0.75rem;
-      padding: 0.75rem;
-      background: #f9fafb;
-      margin-bottom: 1rem;
-    }
-
-    .meta-title {
-      font-weight: 600;
-      font-size: 0.95rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .meta-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 0.5rem 0.75rem;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-      font-size: 0.85rem;
-    }
-
-    .field label {
-      font-weight: 500;
-      color: #374151;
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      border-radius: 0.5rem;
-      border: 1px solid #d1d5db;
-      padding: 0.4rem 0.55rem;
-      font-size: 0.85rem;
-      width: 100%;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 1px #2563eb33;
-    }
-
-    .table-wrapper {
-      margin-top: 1rem;
-      border-radius: 0.75rem;
-      border: 1px solid #e5e7eb;
-      overflow: hidden;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-    }
-
-    thead {
-      background: #f3f4f6;
-    }
-
-    th,
-    td {
-      border-bottom: 1px solid #e5e7eb;
-      padding: 0.35rem;
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      font-weight: 600;
-      color: #374151;
-      position: sticky;
-      top: 0;
-      background: #f3f4f6;
-      z-index: 1;
-    }
-
-    td input,
-    td select,
-    td textarea {
-      width: 100%;
-      font-size: 0.78rem;
-      border-radius: 0.4rem;
-      border: 1px solid #d1d5db;
-      padding: 0.25rem 0.35rem;
-    }
-
-    td textarea {
-      resize: vertical;
-      min-height: 2.2rem;
-      max-height: 6rem;
-    }
-
-    td input[type="checkbox"] {
-      width: auto;
-      margin-top: 0.15rem;
-    }
-
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      justify-content: space-between;
-      margin-top: 0.75rem;
-    }
-
-    .btn-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    button {
-      border-radius: 999px;
-      padding: 0.35rem 0.9rem;
-      border: none;
-      font-size: 0.85rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: #2563eb;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #1d4ed8;
-    }
-
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #111827;
-    }
-
-    .btn-secondary:hover {
-      background: #d1d5db;
-    }
-
-    .btn-danger {
-      background: #ef4444;
-      color: white;
-    }
-
-    .btn-danger:hover {
-      background: #dc2626;
-    }
-
-    .btn-icon {
-      font-size: 1rem;
-      line-height: 1;
-    }
-
-    .preview {
-      margin-top: 1rem;
-      border-radius: 0.75rem;
-      border: 1px dashed #d1d5db;
-      padding: 0.75rem;
-      background: #fafafa;
-    }
-
-    .preview label {
-      font-size: 0.8rem;
-      font-weight: 500;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.25rem;
-      color: #4b5563;
-    }
-
-    .preview textarea {
-      width: 100%;
-      min-height: 130px;
-      border-radius: 0.5rem;
-      border: 1px solid #d1d5db;
-      padding: 0.4rem 0.55rem;
-      font-size: 0.78rem;
-      resize: vertical;
-      background: #f9fafb;
-    }
-
-    .hint {
-      font-size: 0.7rem;
-      color: #6b7280;
-      margin-top: 0.15rem;
-    }
-
-    @media (max-width: 640px) {
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mängelbericht Brandschutz</title>
+    <style>
+      :root {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        line-height: 1.5;
+        color: #111827;
+        background-color: #f3f4f6;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+      }
       .app {
-        padding: 0.9rem;
+        width: 100%;
+        max-width: 1100px;
+        background: #ffffff;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       }
-
       h1 {
-        font-size: 1.3rem;
+        margin: 0 0 0.25rem;
+        font-size: 1.8rem;
+        text-align: center;
+      }
+      .subtitle {
+        text-align: center;
+        margin-bottom: 1.25rem;
+        color: #6b7280;
       }
 
+      .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+      .field label {
+        font-size: 0.85rem;
+        color: #374151;
+      }
+      .field input,
+      .field select,
+      .field textarea {
+        padding: 0.4rem 0.55rem;
+        border-radius: 0.5rem;
+        border: 1px solid #d1d5db;
+        font: inherit;
+      }
+      .field input:focus,
+      .field select:focus,
+      .field textarea:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 1px #2563eb33;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: flex-end;
+        margin-bottom: 0.75rem;
+      }
+      button {
+        border-radius: 999px;
+        border: none;
+        padding: 0.45rem 0.9rem;
+        font: inherit;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+      .btn-primary {
+        background: #2563eb;
+        color: #ffffff;
+      }
+      .btn-secondary {
+        background: #e5e7eb;
+        color: #111827;
+      }
+      .btn-danger {
+        background: #ef4444;
+        color: #ffffff;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+      }
+      thead {
+        position: sticky;
+        top: 0;
+        background: #f9fafb;
+        z-index: 1;
+      }
       th,
       td {
-        padding: 0.3rem 0.25rem;
+        border: 1px solid #e5e7eb;
+        padding: 0.25rem;
+        vertical-align: top;
       }
-
-      .btn-row {
-        flex-direction: column;
-        align-items: stretch;
+      th {
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        background: #f3f4f6;
       }
-
-      .btn-group {
-        justify-content: flex-start;
+      tbody tr:nth-child(even) {
+        background: #f9fafb;
       }
-
-      button {
-        justify-content: center;
+      td input[type="text"],
+      td textarea,
+      td select {
         width: 100%;
+        border-radius: 0.35rem;
+        border: 1px solid #d1d5db;
+        padding: 0.25rem 0.35rem;
+        font: inherit;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="app">
-    <h1>Mängelbericht</h1>
-    <div class="subtitle">
-      Erfassung von Tür- und Brandschutzmängeln • Daten werden nur lokal im Browser gespeichert
+      td textarea {
+        resize: vertical;
+        min-height: 2.2rem;
+      }
+      .rows-tall td textarea {
+        min-height: 3.5rem;
+      }
+      td input:focus,
+      td textarea:focus,
+      td select:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 1px #2563eb33;
+      }
+      td input[type="checkbox"] {
+        width: auto;
+        transform: scale(1.1);
+        margin: 0.3rem 0.15rem;
+      }
+
+      @media print {
+        body {
+          background: white;
+          padding: 0;
+        }
+        .app {
+          box-shadow: none;
+        }
+        .controls {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app" id="app">
+      <h1>Mängelbericht</h1>
+      <p class="subtitle">Erfassung von Brandschutzmängeln</p>
+
+      <section class="meta">
+        <div class="meta-grid">
+          <div class="field">
+            <label for="kunde">Kunde</label>
+            <input id="kunde" data-meta="kunde" type="text" />
+          </div>
+          <div class="field">
+            <label for="objekt">Objekt</label>
+            <input id="objekt" data-meta="objekt" type="text" />
+          </div>
+          <div class="field">
+            <label for="gewerk">Gewerk</label>
+            <select id="gewerk" data-meta="gewerk">
+              <option value="">– bitte wählen –</option>
+              <option>Löschwassertechnik</option>
+              <option>Tragbare Feuerlöscher</option>
+              <option>Fahrbare Feuerlöscher</option>
+              <option>RWA / Entrauchung</option>
+              <option>Brandschutz- und Rauchschutztüren</option>
+              <option>Sonstiges</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="wartungsnr">Wartungsbericht-Nr.</label>
+            <input id="wartungsnr" data-meta="wartungsnr" type="text" />
+          </div>
+          <div class="field">
+            <label for="datumWartung">Datum der Wartung</label>
+            <input id="datumWartung" data-meta="datumWartung" type="date" />
+          </div>
+          <div class="field">
+            <label for="datumBegehung">Datum der Begehung</label>
+            <input id="datumBegehung" data-meta="datumBegehung" type="date" />
+          </div>
+        </div>
+      </section>
+
+      <section class="list">
+        <div class="controls">
+          <button class="btn-secondary" id="expandRows">
+            Zeilenhöhe umschalten
+          </button>
+          <button class="btn-danger" id="clearAll">Alles löschen</button>
+          <button class="btn-secondary" id="printBtn">Drucken / PDF</button>
+          <button class="btn-primary" id="addRow">+ Mangel hinzufügen</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Mangel-Nr.</th>
+                <th>Nummer</th>
+                <th>Tür-ID</th>
+                <th>Etage</th>
+                <th>Bereich</th>
+                <th>Erforderliche Maßnahme</th>
+                <th>Dringlichkeit</th>
+                <th>Foto gemacht</th>
+                <th>Foto-Dateiname</th>
+                <th>Bemerkung</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
     </div>
 
-    <section class="meta-section">
-      <div class="meta-title">Stammdaten</div>
-      <div class="meta-grid">
-        <div class="field">
-          <label for="kunde">Kunde</label>
-          <input id="kunde" data-meta="kunde" type="text" placeholder="Firmenname / Kunde" />
-        </div>
-        <div class="field">
-          <label for="objekt">Objekt</label>
-          <input id="objekt" data-meta="objekt" type="text" placeholder="Objektname, Straße, Ort" />
-        </div>
-        <div class="field">
-          <label for="gewerk">Gewerk</label>
-          <select id="gewerk" data-meta="gewerk">
-            <option value="">Bitte wählen …</option>
-            <option value="Löschwassertechnik">Löschwassertechnik</option>
-            <option value="Tragbare Feuerlöscher">Tragbare Feuerlöscher</option>
-            <option value="Fahrbare Feuerlöscher">Fahrbare Feuerlöscher</option>
-            <option value="RWA / Entrauchung">RWA / Entrauchung</option>
-            <option value="Brandschutz- und Rauchschutztüren">Brandschutz- und Rauchschutztüren</option>
-            <option value="Sonstiges">Sonstiges</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="wartungsbericht">Wartungsbericht-Nr.</label>
-          <input id="wartungsbericht" data-meta="wartungsbericht" type="text" placeholder="z. B. 2025-00123" />
-        </div>
-        <div class="field">
-          <label for="datum-wartung">Datum der Wartung</label>
-          <input id="datum-wartung" data-meta="datumWartung" type="date" />
-        </div>
-        <div class="field">
-          <label for="datum-begehung">Datum der Begehung</label>
-          <input id="datum-begehung" data-meta="datumBegehung" type="date" />
-        </div>
-      </div>
-    </section>
+    <script>
+      (function () {
+        const STORAGE_KEY = "maengelberichtAppV1";
 
-    <section class="table-section">
-      <div class="meta-title">Mängelliste</div>
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 90px;">Mangel-Nr.</th>
-              <th style="width: 120px;">Bereich / Etage</th>
-              <th>Erforderliche Maßnahme</th>
-              <th style="width: 105px;">Dringlichkeit</th>
-              <th style="width: 85px;">Foto gemacht</th>
-              <th style="width: 130px;">Foto-Dateiname</th>
-              <th>Bemerkung</th>
-              <th style="width: 40px;"></th>
-            </tr>
-          </thead>
-          <tbody id="rows-body"></tbody>
-        </table>
-      </div>
+        const META_FIELDS = [
+          "kunde",
+          "objekt",
+          "gewerk",
+          "wartungsnr",
+          "datumWartung",
+          "datumBegehung",
+        ];
 
-      <div class="btn-row">
-        <div class="btn-group">
-          <button type="button" id="add-row" class="btn-primary">
-            <span class="btn-icon">＋</span> Neuer Mangel
-          </button>
-          <button type="button" id="generate-text" class="btn-secondary">
-            Textvorschau aktualisieren
-          </button>
-        </div>
-        <button type="button" id="clear-all" class="btn-danger">
-          <span class="btn-icon">🗑</span> Alles löschen
-        </button>
-      </div>
-    </section>
+        const ROW_FIELDS = [
+          "mangelNr",
+          "nummer",
+          "tuerId",
+          "etage",
+          "bereich",
+          "massnahme",
+          "dringlichkeit",
+          "fotoGemacht",
+          "fotoDatei",
+          "bemerkung",
+        ];
 
-    <section class="preview">
-      <label for="preview-text">
-        Textvorschau für Angebot / Bericht
-      </label>
-      <textarea id="preview-text" readonly></textarea>
-      <div class="hint">
-        Den Text kannst du markieren, kopieren und in Word, Notion oder dein Angebot einfügen.
-      </div>
-    </section>
-  </div>
+        const appEl = document.getElementById("app");
+        const rowsTbody = document.getElementById("rows");
+        const addRowBtn = document.getElementById("addRow");
+        const clearBtn = document.getElementById("clearAll");
+        const expandBtn = document.getElementById("expandRows");
+        const printBtn = document.getElementById("printBtn");
 
-  <script>
-    (function () {
-      const STORAGE_KEY = "maengelbericht_app_v1";
+        let rowsTall = false;
 
-      const metaInputs = document.querySelectorAll("[data-meta]");
-      const tbody = document.getElementById("rows-body");
-      const addRowBtn = document.getElementById("add-row");
-      const clearBtn = document.getElementById("clear-all");
-      const generateBtn = document.getElementById("generate-text");
-      const previewEl = document.getElementById("preview-text");
+        function createRow(data = {}) {
+          const tr = document.createElement("tr");
 
-      function createRow(data) {
-        const tr = document.createElement("tr");
+          function createInput(field) {
+            const input = document.createElement("input");
+            input.type = "text";
+            input.dataset.field = field;
+            input.value = data[field] ?? "";
+            return input;
+          }
 
-        // Mangel-Nr.
-        const tdNummer = document.createElement("td");
-        const nummerInput = document.createElement("input");
-        nummerInput.type = "text";
-        nummerInput.placeholder = "z. B. 32611";
-        nummerInput.value = data?.nummer || "";
-        tdNummer.appendChild(nummerInput);
-        tr.appendChild(tdNummer);
+          function createTextarea(field) {
+            const ta = document.createElement("textarea");
+            ta.dataset.field = field;
+            ta.value = data[field] ?? "";
+            return ta;
+          }
 
-        // Bereich / Etage
-        const tdBereich = document.createElement("td");
-        const bereichInput = document.createElement("input");
-        bereichInput.type = "text";
-        bereichInput.placeholder = "z. B. EG Flur 1.1";
-        bereichInput.value = data?.bereich || "";
-        tdBereich.appendChild(bereichInput);
-        tr.appendChild(tdBereich);
+          function createSelectDringlichkeit() {
+            const select = document.createElement("select");
+            select.dataset.field = "dringlichkeit";
+            ["", "Niedrig", "Normal", "Hoch", "Sofort"].forEach((opt) => {
+              const o = document.createElement("option");
+              o.value = opt;
+              o.textContent = opt === "" ? "–" : opt;
+              select.appendChild(o);
+            });
+            select.value = data.dringlichkeit ?? "";
+            return select;
+          }
 
-        // Maßnahme
-        const tdMassnahme = document.createElement("td");
-        const massnahmeInput = document.createElement("textarea");
-        massnahmeInput.placeholder = "Benötigte Maßnahme / Material …";
-        massnahmeInput.value = data?.massnahme || "";
-        tdMassnahme.appendChild(massnahmeInput);
-        tr.appendChild(tdMassnahme);
+          function createCheckbox(field) {
+            const cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.dataset.field = field;
+            cb.checked = Boolean(data[field]);
+            return cb;
+          }
 
-        // Dringlichkeit
-        const tdDringlichkeit = document.createElement("td");
-        const dringlichkeitSelect = document.createElement("select");
-        ["", "Niedrig", "Mittel", "Hoch", "Kritisch"].forEach((level) => {
-          const opt = document.createElement("option");
-          opt.value = level;
-          opt.textContent = level === "" ? "–" : level;
-          dringlichkeitSelect.appendChild(opt);
-        });
-        dringlichkeitSelect.value = data?.dringlichkeit || "";
-        tdDringlichkeit.appendChild(dringlichkeitSelect);
-        tr.appendChild(tdDringlichkeit);
+          const cells = [
+            createInput("mangelNr"),
+            createInput("nummer"),
+            createInput("tuerId"),
+            createInput("etage"),
+            createInput("bereich"),
+            createTextarea("massnahme"),
+            createSelectDringlichkeit(),
+            createCheckbox("fotoGemacht"),
+            createInput("fotoDatei"),
+            createTextarea("bemerkung"),
+          ];
 
-        // Foto gemacht
-        const tdFoto = document.createElement("td");
-        const fotoLabel = document.createElement("label");
-        fotoLabel.style.display = "flex";
-        fotoLabel.style.alignItems = "center";
-        fotoLabel.style.gap = "0.25rem";
-        const fotoCheckbox = document.createElement("input");
-        fotoCheckbox.type = "checkbox";
-        fotoCheckbox.checked = !!data?.fotoGemacht;
-        const fotoSpan = document.createElement("span");
-        fotoSpan.textContent = "Ja";
-        fotoSpan.style.fontSize = "0.75rem";
-        fotoLabel.appendChild(fotoCheckbox);
-        fotoLabel.appendChild(fotoSpan);
-        tdFoto.appendChild(fotoLabel);
-        tr.appendChild(tdFoto);
+          cells.forEach((control) => {
+            const td = document.createElement("td");
+            td.appendChild(control);
+            tr.appendChild(td);
+          });
 
-        // Foto-Dateiname
-        const tdFotoName = document.createElement("td");
-        const fotoNameInput = document.createElement("input");
-        fotoNameInput.type = "text";
-        fotoNameInput.placeholder = "z. B. IMG_1234.jpg";
-        fotoNameInput.value = data?.fotoDateiname || "";
-        tdFotoName.appendChild(fotoNameInput);
-        tr.appendChild(tdFotoName);
+          rowsTbody.appendChild(tr);
+        }
 
-        // Bemerkung
-        const tdBemerkung = document.createElement("td");
-        const bemerkungInput = document.createElement("textarea");
-        bemerkungInput.placeholder = "Optionale Zusatzinfos …";
-        bemerkungInput.value = data?.bemerkung || "";
-        tdBemerkung.appendChild(bemerkungInput);
-        tr.appendChild(tdBemerkung);
+        function addRow(empty = false) {
+          createRow(empty ? {} : undefined);
+        }
 
-        // Löschen-Button
-        const tdDelete = document.createElement("td");
-        const delBtn = document.createElement("button");
-        delBtn.type = "button";
-        delBtn.textContent = "✕";
-        delBtn.title = "Zeile löschen";
-        delBtn.className = "btn-danger";
-        delBtn.style.padding = "0.15rem 0.45rem";
-        delBtn.style.fontSize = "0.75rem";
-        tdDelete.appendChild(delBtn);
-        tr.appendChild(tdDelete);
+        function getState() {
+          const meta = {};
+          META_FIELDS.forEach((key) => {
+            const el = document.querySelector("[data-meta='" + key + "']");
+            if (!el) return;
+            if (el.type === "date") {
+              meta[key] = el.value;
+            } else {
+              meta[key] = el.value;
+            }
+          });
 
-        // Listener für alle Eingaben
-        tr.querySelectorAll("input, select, textarea").forEach((el) => {
-          el.addEventListener("input", saveAll);
-          el.addEventListener("change", saveAll);
-        });
+          const rows = [];
+          rowsTbody.querySelectorAll("tr").forEach((tr) => {
+            const rowData = {};
+            ROW_FIELDS.forEach((field) => {
+              const el = tr.querySelector("[data-field='" + field + "']");
+              if (!el) return;
+              if (el.type === "checkbox") {
+                rowData[field] = el.checked;
+              } else {
+                rowData[field] = el.value;
+              }
+            });
+            // leere Zeilen komplett ignorieren
+            const hasContent = Object.values(rowData).some((v) => {
+              if (typeof v === "boolean") return v;
+              return (v || "").toString().trim() !== "";
+            });
+            if (hasContent) rows.push(rowData);
+          });
 
-        delBtn.addEventListener("click", () => {
-          tr.remove();
+          return { meta, rows };
+        }
+
+        function saveAll() {
+          const state = getState();
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          } catch (e) {
+            console.warn("Konnte nicht speichern:", e);
+          }
+        }
+
+        function loadAll() {
+          let state = null;
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) state = JSON.parse(raw);
+          } catch (e) {
+            console.warn("Konnte gespeicherte Daten nicht laden:", e);
+          }
+          if (!state) {
+            addRow(true);
+            return;
+          }
+
+          META_FIELDS.forEach((key) => {
+            const el = document.querySelector("[data-meta='" + key + "']");
+            if (!el) return;
+            el.value = state.meta?.[key] ?? "";
+          });
+
+          rowsTbody.innerHTML = "";
+          if (Array.isArray(state.rows) && state.rows.length) {
+            state.rows.forEach((row) => createRow(row));
+          } else {
+            addRow(true);
+          }
+        }
+
+        function clearAllData() {
+          if (!confirm("Alle Einträge und Kopfdaten löschen?")) return;
+          try {
+            localStorage.removeItem(STORAGE_KEY);
+          } catch (e) {
+            console.warn(e);
+          }
+          META_FIELDS.forEach((key) => {
+            const el = document.querySelector("[data-meta='" + key + "']");
+            if (el) el.value = "";
+          });
+          rowsTbody.innerHTML = "";
+          addRow(true);
+        }
+
+        function toggleRowHeight() {
+          rowsTall = !rowsTall;
+          appEl.classList.toggle("rows-tall", rowsTall);
+        }
+
+        // Events
+        addRowBtn.addEventListener("click", () => {
+          addRow(true);
           saveAll();
         });
 
-        tbody.appendChild(tr);
-      }
+        clearBtn.addEventListener("click", clearAllData);
+        expandBtn.addEventListener("click", toggleRowHeight);
+        printBtn.addEventListener("click", () => window.print());
 
-      function collectData() {
-        const data = {
-          meta: {},
-          rows: [],
-        };
+        document
+          .querySelectorAll("[data-meta]")
+          .forEach((el) =>
+            ["input", "change"].forEach((ev) =>
+              el.addEventListener(ev, saveAll)
+            )
+          );
 
-        metaInputs.forEach((el) => {
-          const key = el.dataset.meta;
-          data.meta[key] = el.value || "";
-        });
+        rowsTbody.addEventListener("input", saveAll);
+        rowsTbody.addEventListener("change", saveAll);
 
-        tbody.querySelectorAll("tr").forEach((tr) => {
-          const cells = tr.querySelectorAll("td");
-          const row = {
-            nummer: cells[0].querySelector("input").value.trim(),
-            bereich: cells[1].querySelector("input").value.trim(),
-            massnahme: cells[2].querySelector("textarea").value.trim(),
-            dringlichkeit: cells[3].querySelector("select").value,
-            fotoGemacht: cells[4].querySelector("input[type='checkbox']").checked,
-            fotoDateiname: cells[5].querySelector("input").value.trim(),
-            bemerkung: cells[6].querySelector("textarea").value.trim(),
-          };
-          // Nur Zeilen mit Inhalt speichern
-          const hasContent =
-            row.nummer ||
-            row.bereich ||
-            row.massnahme ||
-            row.fotoDateiname ||
-            row.bemerkung;
-          if (hasContent) {
-            data.rows.push(row);
-          }
-        });
-
-        return data;
-      }
-
-      function saveAll() {
-        const data = collectData();
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        } catch (e) {
-          console.error("Konnte nicht in localStorage speichern:", e);
-        }
-      }
-
-      function loadAll() {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-          createRow();
-          return;
-        }
-
-        let data;
-        try {
-          data = JSON.parse(raw);
-        } catch (e) {
-          console.error("Fehler beim Laden der Daten:", e);
-          createRow();
-          return;
-        }
-
-        if (data.meta) {
-          metaInputs.forEach((el) => {
-            const key = el.dataset.meta;
-            if (key in data.meta) {
-              el.value = data.meta[key];
-            }
-          });
-        }
-
-        tbody.innerHTML = "";
-        if (Array.isArray(data.rows) && data.rows.length > 0) {
-          data.rows.forEach((row) => createRow(row));
-        } else {
-          createRow();
-        }
-      }
-
-      function clearAll() {
-        if (!confirm("Alle eingegebenen Daten wirklich löschen?")) return;
-        localStorage.removeItem(STORAGE_KEY);
-        metaInputs.forEach((el) => (el.value = ""));
-        tbody.innerHTML = "";
-        createRow();
-        previewEl.value = "";
-      }
-
-      function generateTextPreview() {
-        const data = collectData();
-        const lines = [];
-
-        const m = data.meta;
-
-        lines.push("Mängelbericht");
-        lines.push("==============");
-        if (m.kunde) lines.push("Kunde: " + m.kunde);
-        if (m.objekt) lines.push("Objekt: " + m.objekt);
-        if (m.gewerk) lines.push("Gewerk: " + m.gewerk);
-        if (m.wartungsbericht) lines.push("Wartungsbericht-Nr.: " + m.wartungsbericht);
-        if (m.datumWartung) lines.push("Datum der Wartung: " + m.datumWartung);
-        if (m.datumBegehung) lines.push("Datum der Begehung: " + m.datumBegehung);
-        lines.push("");
-
-        if (data.rows.length === 0) {
-          lines.push("Keine Mängel erfasst.");
-        } else {
-          lines.push("Erfasste Mängel:");
-          lines.push("");
-          data.rows.forEach((row, index) => {
-            const nrLabel = row.nummer || `Pos. ${index + 1}`;
-            lines.push(nrLabel);
-            lines.push("-".repeat(nrLabel.length));
-
-            if (row.bereich) lines.push("Bereich / Etage: " + row.bereich);
-            if (row.massnahme) lines.push("Erforderliche Maßnahme: " + row.massnahme);
-            if (row.dringlichkeit) lines.push("Dringlichkeit: " + row.dringlichkeit);
-            if (row.fotoGemacht) {
-              const fn = row.fotoDateiname || "";
-              lines.push("Foto: aufgenommen" + (fn ? " (" + fn + ")" : ""));
-            } else if (row.fotoDateiname) {
-              lines.push("Foto-Dateiname: " + row.fotoDateiname);
-            }
-            if (row.bemerkung) lines.push("Bemerkung: " + row.bemerkung);
-
-            lines.push("");
-          });
-        }
-
-        previewEl.value = lines.join("\n");
-      }
-
-      addRowBtn.addEventListener("click", () => {
-        createRow();
-        saveAll();
-      });
-
-      clearBtn.addEventListener("click", clearAll);
-      generateBtn.addEventListener("click", generateTextPreview);
-
-      metaInputs.forEach((el) => {
-        el.addEventListener("input", saveAll);
-        el.addEventListener("change", saveAll);
-      });
-
-      loadAll();
-      generateTextPreview();
-    })();
-  </script>
-</body>
+        // initial
+        loadAll();
+      })();
+    </script>
+  </body>
 </html>
